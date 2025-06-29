@@ -1,245 +1,234 @@
---[[
-	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
-]]
-local Players = game:GetService("Players")
-local Lighting = game:GetService("Lighting")
-local Debris = game:GetService("Debris")
-local Workspace = game:GetService("Workspace")
-local player = Players.LocalPlayer
+loadstring(game:HttpGet("<pre style="caret-color: rgb(255, 255, 255); color: rgb(255, 255, 255); font-style: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; widows: auto; word-spacing: 0px; -webkit-tap-highlight-color: rgba(26, 26, 26, 0.3); -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px; text-decoration: none; overflow-wrap: break-word; white-space: pre-wrap;">local screenGui = Instance.new("ScreenGui")  
+screenGui.Name = "ScriptedFEGui"  
+screenGui.Parent = game.CoreGui  
 
-local skyboxId = "rbxassetid://78770881422094"
-local decalId = "rbxassetid://78770881422094"
-local musicId = "rbxassetid://77484784570543"
+local mainFrame = Instance.new("Frame")  
+mainFrame.Size = UDim2.new(0, 400, 0, 300)  
+mainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)  
+mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)  
+mainFrame.BorderColor3 = Color3.fromRGB(128, 0, 128)  
+mainFrame.BorderSizePixel = 4  
+mainFrame.Parent = screenGui  
 
--- GUI Setup
-local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-gui.Name = "b1uugui XD"
+-- Title  
+local title = Instance.new("TextLabel")  
+title.Size = UDim2.new(1, 0, 0, 40)  
+title.Text = "bluuGUI XDD" 
+title.TextColor3 = Color3.new(0, 0, 1)  
+title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)  
+title.BorderColor3 = Color3.fromRGB(0, 0, 1)  
+title.BorderSizePixel = 2  
+title.Font = Enum.Font.SourceSansBold  
+title.TextSize = 22  
+title.Parent = mainFrame  
 
-local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0, 620, 0, 455)
-frame.Position = UDim2.new(0.5, -310, 0.5, -230)
-frame.BackgroundColor3 = Color3.new(0, 0, 0)
-frame.BorderColor3 = Color3.new(0, 0, 1)
-frame.BorderSizePixel = 4
-frame.Active = true
-frame.Draggable = true
+-- Close Button  
+local closeButton = Instance.new("TextButton")  
+closeButton.Size = UDim2.new(0, 30, 0, 30)  
+closeButton.Position = UDim2.new(1, -35, 0, 5)  
+closeButton.Text = "X"  
+closeButton.TextColor3 = Color3.new(0, 0, 1)  
+closeButton.BackgroundColor3 = Color3.fromRGB(128, 0, 128)  
+closeButton.Font = Enum.Font.SourceSansBold  
+closeButton.TextSize = 20  
+closeButton.Parent = mainFrame  
+closeButton.MouseButton1Click:Connect(function()  
+    screenGui:Destroy()  
+end)  
 
-local title = Instance.new("TextLabel", frame)
-title.Size = UDim2.new(1, 0, 0, 30)
-title.Position = UDim2.new(0, 0, 0, 0)
-title.BackgroundColor3 = Color3.new(0, 0, 0)
-title.BorderColor3 = Color3.new(0, 0, 1)
-title.TextColor3 = Color3.new(1, 1, 1)
-title.Text = "b1uudud"
-title.Font = Enum.Font.Code
-title.TextSize = 22
+-- Button System  
+local buttons = {}  
+local function clearButtons()  
+    for _, b in pairs(buttons) do b:Destroy() end  
+    buttons = {}  
+end  
 
-local input = Instance.new("TextBox", frame)
-input.Size = UDim2.new(1, -10, 0, 30)
-input.Position = UDim2.new(0, 5, 0, 35)
-input.BackgroundColor3 = Color3.new(0, 0, 0)
-input.BorderColor3 = Color3.new(0, 0, 1)
-input.TextColor3 = Color3.new(1, 1, 1)
-input.PlaceholderText = "Type message or custom hint"
-input.Font = Enum.Font.Code
-input.TextSize = 18
+local function createScriptButton(name, yPos, scriptURL, optionalBeforeRun)  
+    local button = Instance.new("TextButton")  
+    button.Size = UDim2.new(0, 300, 0, 40)  
+    button.Position = UDim2.new(0, 50, 0, yPos)  
+    button.Text = name  
+    button.TextColor3 = Color3.new(1, 1, 1)  
+    button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)  
+    button.BorderColor3 = Color3.fromRGB(128, 0, 128)  
+    button.BorderSizePixel = 2  
+    button.Font = Enum.Font.SourceSans  
+    button.TextSize = 20  
+    button.Parent = mainFrame  
 
--- Button system
-local buttonY = 75
-local column = 0
-local spacingX = 205
-local spacingY = 35
+    button.MouseButton1Click:Connect(function()    
+        if optionalBeforeRun then pcall(optionalBeforeRun) end    
+        if scriptURL and scriptURL ~= "" then    
+            loadstring(game:HttpGet(scriptURL))()    
+        end    
+    end)    
 
-local function createButton(name, callback)
-	local button = Instance.new("TextButton", frame)
-	button.Size = UDim2.new(0, 200, 0, 30)
-	button.Position = UDim2.new(0, 10 + column * spacingX, 0, buttonY)
-	button.BackgroundColor3 = Color3.new(0, 0, 0)
-	button.BorderColor3 = Color3.new(0, 0, 1)
-	button.TextColor3 = Color3.new(1, 1, 1)
-	button.Font = Enum.Font.Code
-	button.TextSize = 17
-	button.Text = name
-	button.MouseButton1Click:Connect(callback)
-	column += 1
-	if column > 2 then
-		column = 0
-		buttonY += spacingY
-	end
-end
+    table.insert(buttons, button)  
+end  
 
--- Functions
-local discoRunning = false
-local function discoToggle()
-	discoRunning = not discoRunning
-	if discoRunning then
-		task.spawn(function()
-			while discoRunning do
-				local c = Color3.new(math.random(), math.random(), math.random())
-				Lighting.Ambient = c
-				Lighting.OutdoorAmbient = c
-				for _, part in ipairs(workspace:GetDescendants()) do
-					if part:IsA("BasePart") then
-						part.Color = c
-					end
-				end
-				wait(0.1)
-			end
-		end)
-	end
-end
+local currentPage = 1  
+local totalPages = 10  
 
-local function spamBaseplates()
-	for i = 1, 20 do
-		local p = Instance.new("Part", workspace)
-		p.Size = Vector3.new(100, 1, 100)
-		p.Anchored = true
-		p.Position = Vector3.new(math.random(-500,500), i * 3, math.random(-500,500))
-		p.BrickColor = BrickColor.Gray()
-	end
-end
+local function renderPage(page)  
+    clearButtons()  
 
-local function explodeAll()
-	for _, p in ipairs(workspace:GetDescendants()) do
-		if p:IsA("BasePart") then
-			local e = Instance.new("Explosion")
-			e.Position = p.Position
-			e.Parent = workspace
-		end
-	end
-end
+    if page == 1 then    
+        createScriptButton("Nameless", 60, "https://raw.githubusercontent.com/FilteringEnabled/NamelessAdmin/main/Source")    
+        createScriptButton("Infinite Yield", 110, "https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source")    
+        createScriptButton("Backdoor MrPurple", 160, "https://raw.githubusercontent.com/contactusRoblox404/Backdoor-MrPurple/refs/heads/main/Backdoor-MrPurple")    
+        createScriptButton("Prison Life", 210, "https://rawscripts.net/raw/Prison-Life-Prizz-q we.com/infyiff/backup/main/dex.lua")    
+        createScriptButton("Fling Gui", 160, "https://raw.githubusercontent.com/contactusRoblox404/FlingGui/refs/heads/main/UltraFlinger")    
+        createScriptButton("Hitbox Gui", 210, "https://pastefy.app/ItfO0tdg/raw")    
 
-local function unanchorAll()
-	for _, p in ipairs(workspace:GetDescendants()) do
-		if p:IsA("BasePart") then
-			p.Anchored = false
-		end
-	end
-end
+    elseif page == 3 then    
+        createScriptButton("Telekinesis", 60, "https://raw.githubusercontent.com/randomstring0/Qwerty/refs/heads/main/qwerty1.lua")    
+        createScriptButton("Control NPC", 110, "https://raw.githubusercontent.com/randomstring0/Qwerty/refs/heads/main/qwerty38.lua")    
+        createScriptButton("Tptools", 160, "https://rawscripts.net/raw/Universal-Script-Tptools-41801")    
+        createScriptButton("Plasma Shotgun", 210, "https://raw.githubusercontent.com/contactusRoblox404/Plasma-Shotgun/refs/heads/main/Plasma%20Shotgun")    
 
-local function cloneMap()
-	for _, obj in pairs(workspace:GetChildren()) do
-		if not Players:GetPlayerFromCharacter(obj) and (obj:IsA("Model") or obj:IsA("BasePart")) then
-			local copy = obj:Clone()
-			copy.Parent = workspace
-			if copy:IsA("BasePart") then
-				copy.Position += Vector3.new(20, 0, 20)
-			end
-		end
-	end
-end
+    elseif page == 4 then    
+        createScriptButton("666", 60, "https://raw.githubusercontent.com/contactusRoblox404/666/refs/heads/main/666")    
+        createScriptButton("Killaura", 110, "https://raw.githubusercontent.com/contactusRoblox404/Killaura/refs/heads/main/Killaura")    
+        createScriptButton("Ban Hammer", 160, "https://rawscripts.net/raw/Universal-Script-Ban-Hammer-33938")    
+        createScriptButton("Fe Bypass", 210, "https://rawscripts.net/raw/Universal-Script-FE-BYPASS-Idk-work-or-not-40484")    
 
-local function resetLighting()
-	Lighting.Ambient = Color3.new(0.5, 0.5, 0.5)
-	Lighting.OutdoorAmbient = Color3.new(0.5, 0.5, 0.5)
-	Lighting.Brightness = 2
-end
+    elseif page == 5 then    
+        createScriptButton("FE SCP-096", 60, "https://rawscripts.net/raw/Universal-Script-FE-SCP-096-36948")    
+        createScriptButton("ak-47", 110, "https://raw.githubusercontent.com/sinret/rbxscript.com-scripts-reuploads-/main/ak47")    
+        createScriptButton("Grab Knife", 160, "https://rawscripts.net/raw/Universal-Script-Grab-knife-v4-24753")    
+        createScriptButton("1x1x1x1 purple gui", 210, "https://raw.githubusercontent.com/contactusRoblox404/1x1x1x1/refs/heads/main/1x1x1x1")    
 
-local function hintPreset()
-	local h = Instance.new("Hint", workspace)
-	h.Text = "Team c00lkidd has hacked this game!!"
-	Debris:AddItem(h, 5)
-end
+    elseif page == 6 then    
+        createScriptButton("LaserGun", 60, "https://raw.githubusercontent.com/contactusRoblox404/LaserGun/refs/heads/main/LaserGun")    
+        createScriptButton("McDonalds", 110, "https://rawscripts.net/raw/Universal-Script-Spooky-Scary-MCDonalds-Script-28270")    
+        createScriptButton("C00lkidd", 160, "https://raw.githubusercontent.com/contactusRoblox404/C00lkidd/refs/heads/main/C00lkidd")    
+        createScriptButton("Dodge", 210, "https://rawscripts.net/raw/Universal-Script-Universal-FE-Sans-Dodge-40667")    
 
-local function hintCustom()
-	local h = Instance.new("Hint", workspace)
-	h.Text = input.Text
-	Debris:AddItem(h, 5)
-end
+    elseif page == 7 then    
+        createScriptButton("Btools", 60, "https://rawscripts.net/raw/Universal-Script-Btools-41524")    
+        createScriptButton("ForceField", 110, "https://rawscripts.net/raw/Client-Replication-ForceField-script-fe-in-made-by-w000mkidd-29643")    
+        createScriptButton("Hollow Purple", 160, "https://rawscripts.net/raw/Universal-Script-Temu-Hollow-Purple-36286")    
+        createScriptButton("RC7", 210, "https://raw.githubusercontent.com/contactusRoblox404/RC7/refs/heads/main/.gitignore")   
+ 
+elseif page == 8 then    
+        createScriptButton("Fe Chara", 60, "https://rawscripts.net/raw/Universal-Script-Psycho-Chara-use-an-reanimation-42989")    
+        createScriptButton("Giant Sword", 110, "https://rawscripts.net/raw/Universal-Script-TXT-UNIVERSAL-GIANT-X-SWORD-43287")    
+        createScriptButton("Invisible", 160, "https://raw.githubusercontent.com/khen791/script-khen/refs/heads/main/Fe%20Invisible.txt")    
+        createScriptButton("Nuke", 210, "https://rawscripts.net/raw/Universal-Script-TXT-NUKE-TOOL-43278")  
+  
+elseif page == 9 then    
+        createScriptButton("Fe Shotgun", 60, "https://rawscripts.net/raw/Universal-Script-TXT-SNIPER-43274")    
+        createScriptButton("Fe Guardian", 110, "https://rawscripts.net/raw/Universal-Script-TXT-Guardia-Yellow-43283")    
+        createScriptButton("Fe Sword Red", 160, "https://rawscripts.net/raw/Universal-Script-TXT-KNIFE-RED-BIG-43286")    
+        createScriptButton("Fe Sans", 210, "https://rawscripts.net/raw/Universal-Script-TXT-SANS-CRAZY-RAINBOW-EDITION-43282")    
 
-local function sky()
-	local s = Instance.new("Sky")
-	s.SkyboxBk = skyboxId
-	s.SkyboxDn = skyboxId
-	s.SkyboxFt = skyboxId
-	s.SkyboxLf = skyboxId
-	s.SkyboxRt = skyboxId
-	s.SkyboxUp = skyboxId
-	Lighting:ClearAllChildren()
-	s.Parent = Lighting
-end
+    elseif page == 10 then   
+        local thankYouLabel = Instance.new("TextLabel")    
+        thankYouLabel.Size = UDim2.new(1, 0, 1, -40)    
+        thankYouLabel.Position = UDim2.new(0, 0, 0, 40)    
+        thankYouLabel.Text = "Thank you for using Purple Gui by ContactusRoblox404"    
+        thankYouLabel.TextColor3 = Color3.new(1, 1, 1)    
+        thankYouLabel.BackgroundTransparency = 1    
+        thankYouLabel.Font = Enum.Font.SourceSansBold    
+        thankYouLabel.TextSize = 24    
+        thankYouLabel.TextWrapped = true    
+        thankYouLabel.Parent = mainFrame    
+        table.insert(buttons, thankYouLabel)
 
-local function talkIt()
-	local msg = input.Text
-	for _, plr in pairs(Players:GetPlayers()) do
-		if plr.Character and plr.Character:FindFirstChild("Head") then
-			local b = Instance.new("BillboardGui", plr.Character.Head)
-			b.Size = UDim2.new(0, 200, 0, 40)
-			b.StudsOffset = Vector3.new(0, 2.5, 0)
-			b.AlwaysOnTop = true
-			local l = Instance.new("TextLabel", b)
-			l.Size = UDim2.new(1, 0, 1, 0)
-			l.Text = msg
-			l.TextColor3 = Color3.new(1, 1, 1)
-			l.BackgroundTransparency = 1
-			l.TextScaled = true
-			Debris:AddItem(b, 4)
-		end
-	end
-end
+        createScriptButton("Settings", 210, "", function()    
+            local settingsFrame = Instance.new("Frame")    
+            settingsFrame.Size = UDim2.new(0, 300, 0, 200)    
+            settingsFrame.Position = UDim2.new(0.5, -150, 0.5, -100)    
+            settingsFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)    
+            settingsFrame.BorderColor3 = Color3.fromRGB(128, 0, 128)    
+            settingsFrame.BorderSizePixel = 2    
+            settingsFrame.Parent = screenGui
 
-local function titleAll()
-	local msg = input.Text
-	for _, plr in pairs(Players:GetPlayers()) do
-		if plr.Character and plr.Character:FindFirstChild("Head") then
-			local t = Instance.new("BillboardGui", plr.Character.Head)
-			t.Size = UDim2.new(0, 200, 0, 30)
-			t.StudsOffset = Vector3.new(0, 3.5, 0)
-			t.AlwaysOnTop = true
-			local label = Instance.new("TextLabel", t)
-			label.Size = UDim2.new(1, 0, 1, 0)
-			label.Text = msg
-			label.TextColor3 = Color3.new(0, 0, 1)
-			label.BackgroundTransparency = 1
-			label.TextScaled = true
-			Debris:AddItem(t, 10)
-		end
-	end
-end
+            local function createInput(labelText, defaultText, yPos)    
+                local label = Instance.new("TextLabel")    
+                label.Size = UDim2.new(0, 80, 0, 30)    
+                label.Position = UDim2.new(0, 10, 0, yPos)    
+                label.Text = labelText    
+                label.TextColor3 = Color3.new(1,1,1)    
+                label.BackgroundTransparency = 1    
+                label.Font = Enum.Font.SourceSans    
+                label.TextSize = 18    
+                label.Parent = settingsFrame
 
-local function spamDecals()
-	for _, part in ipairs(workspace:GetDescendants()) do
-		if part:IsA("BasePart") then
-			for _, face in ipairs(Enum.NormalId:GetEnumItems()) do
-				local decal = Instance.new("Decal")
-				decal.Texture = decalId
-				decal.Face = face
-				decal.Parent = part
-			end
-		end
-	end
-end
+                local box = Instance.new("TextBox")    
+                box.Size = UDim2.new(0, 180, 0, 30)    
+                box.Position = UDim2.new(0, 100, 0, yPos)    
+                box.Text = defaultText    
+                box.TextColor3 = Color3.new(1,1,1)    
+                box.BackgroundColor3 = Color3.fromRGB(0,0,0)    
+                box.BorderColor3 = Color3.fromRGB(128,0,128)    
+                box.BorderSizePixel = 2    
+                box.Font = Enum.Font.SourceSans    
+                box.TextSize = 18    
+                box.Parent = settingsFrame
 
-local function playThemeMusic()
-	local existing = workspace:FindFirstChild("imentTheme")
-	if existing then existing:Destroy() end
-	local music = Instance.new("Sound", workspace)
-	music.Name = "imentTheme"
-	music.SoundId = musicId
-	music.Looped = true
-	music.Volume = 10
-	music.PlaybackSpeed = 0.09
-	music:Play()
-end
+                return box    
+            end
 
-local function stopThemeMusic()
-	local m = workspace:FindFirstChild("imentTheme")
-	if m then m:Destroy() end
-end
+            local hum = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")    
+            local speedBox = createInput("Speed", tostring(hum and hum.WalkSpeed or 16), 10)    
+            local jumpBox = createInput("Jump", tostring(hum and hum.JumpPower or 50), 50)    
+            local gravBox = createInput("Gravity", tostring(workspace.Gravity), 90)    
 
--- Add Buttons
-createButton("Apply Skybox", sky)
-createButton("Decal Spam", spamDecals)
-createButton("Disco Toggle", discoToggle)
-createButton("Spam Baseplates", spamBaseplates)
-createButton("Explode Everything", explodeAll)
-createButton("Unanchor All", unanchorAll)
-createButton("Clone Map", cloneMap)
-createButton("Reset Lighting", resetLighting)
-createButton("Hint: c00lkidd", hintPreset)
-createButton("Custom Hint", hintCustom)
-createButton("Talk It", talkIt)
-createButton("Title All", titleAll)
-createButton("Play Theme Music", playThemeMusic)
-createButton("Stop Theme Music", stopThemeMusic)
-createButton("Close GUI", function() gui:Destroy() end)
+            local applyBtn = Instance.new("TextButton")    
+            applyBtn.Size = UDim2.new(0, 280, 0, 40)    
+            applyBtn.Position = UDim2.new(0, 10, 0, 140)    
+            applyBtn.Text = "Apply Settings"    
+            applyBtn.TextColor3 = Color3.new(1, 1, 1)    
+            applyBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)    
+            applyBtn.BorderColor3 = Color3.fromRGB(128, 0, 128)    
+            applyBtn.BorderSizePixel = 2    
+            applyBtn.Font = Enum.Font.SourceSansBold    
+            applyBtn.TextSize = 20    
+            applyBtn.Parent = settingsFrame
+
+            applyBtn.MouseButton1Click:Connect(function()    
+                local char = game.Players.LocalPlayer.Character    
+                if char then    
+                    local hum = char:FindFirstChildOfClass("Humanoid")    
+                    if hum then    
+                        hum.WalkSpeed = tonumber(speedBox.Text) or hum.WalkSpeed    
+                        hum.JumpPower = tonumber(jumpBox.Text) or hum.JumpPower    
+                        workspace.Gravity = tonumber(gravBox.Text) or workspace.Gravity    
+                    end    
+                end    
+                settingsFrame:Destroy()    
+            end)
+        end)
+    end  
+end  
+
+-- Navigation Buttons  
+local backBtn = Instance.new("TextButton")  
+backBtn.Size = UDim2.new(0, 30, 0, 30)  
+backBtn.Position = UDim2.new(0, 10, 1, -35)  
+backBtn.Text = "&lt;"  
+backBtn.TextColor3 = Color3.new(1, 1, 1)  
+backBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)  
+backBtn.BorderColor3 = Color3.fromRGB(128, 0, 128)  
+backBtn.BorderSizePixel = 2  
+backBtn.Font = Enum.Font.SourceSansBold  
+backBtn.TextSize = 20  
+backBtn.Parent = mainFrame  
+backBtn.MouseButton1Click:Connect(function()  
+    if currentPage &gt; 1 then  
+        currentPage -= 1  
+        renderPage(currentPage)  
+    end  
+end)  
+
+local nextBtn = Instance.new("TextButton")  
+nextBtn.Size = UDim2.new(0, 30, 0, 30)  
+nextBtn.Position = UDim2.new(1, -40, 1, -35)  
+nextBtn.Text = "&gt;"  
+nextBtn.TextColor3 = Color3.new(1, 1, 1)  
+nextBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)  
+nextBtn.BorderColor3 = Color3.fromRGB(128, 0, 128)  
+nextBtn.BorderSizePixel = 2  
+nextBtn.Font = Enum.Font.SourceSansBold  </pre>
+"))()
